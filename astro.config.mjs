@@ -16,7 +16,6 @@ export default defineConfig({
 	integrations: [
 		react(),
 		emdash({
-			siteUrl: "https://testsandminds.com",
 			database: d1({ binding: "DB", session: "auto" }),
 			storage: r2({ binding: "MEDIA" }),
 			plugins: [formsPlugin()],
