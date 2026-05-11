@@ -3,11 +3,11 @@ import react from "@astrojs/react";
 import { d1, r2, sandbox } from "@emdash-cms/cloudflare";
 import { formsPlugin } from "@emdash-cms/plugin-forms";
 import { webhookNotifierPlugin } from "@emdash-cms/plugin-webhook-notifier";
-import { defineConfig } from "astro/config";
+import { defineConfig, memoryCache } from "astro/config";
 import emdash from "emdash/astro";
 
 export default defineConfig({
-	output: "server",
+	experimental: { cache: { provider: memoryCache() } },	output: "server",
 	adapter: cloudflare(),
 	image: {
 		layout: "constrained",
