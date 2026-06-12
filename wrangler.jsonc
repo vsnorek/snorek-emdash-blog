@@ -19,6 +19,9 @@
 			"bucket_name": "my-emdash-media","preview_bucket_name": "my-emdash-media",
 		},
 	],
+	"triggers": {
+		"crons": ["*/5 * * * *"],
+	},
 	"observability": {
 		"enabled": true,
 	},
