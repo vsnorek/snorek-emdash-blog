@@ -13,11 +13,11 @@
 	"dependencies": {
 		"@astrojs/cloudflare": "^13.1.6",
 		"@astrojs/react": "^5.0.0",
-		"@emdash-cms/cloudflare": "^0.26.0",
+		"@emdash-cms/cloudflare": "^0.27.0",
 		"@emdash-cms/plugin-forms": "^0.2.2",
 		"@emdash-cms/plugin-webhook-notifier": "^0.1.2",
 		"astro": "^6.1.2",
-		"emdash": "^0.26.0",
+		"emdash": "^0.27.0",
 		"react": "^19.2.4",
 		"react-dom": "^19.2.4"
 	},
@@ -27,10 +27,6 @@
 		"wrangler": "^4.79.0"
 	}
 }
-
-
-
-
 
 
 
