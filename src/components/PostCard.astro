@@ -5,6 +5,7 @@ import { Image } from "emdash/ui";
 interface Props {
 	title: string;
 	excerpt?: string;
+	snippet?: string;
 	featuredImage?: MediaValue | string;
 	href: string;
 	date?: Date;
@@ -16,6 +17,7 @@ interface Props {
 const {
 	title,
 	excerpt,
+	snippet,
 	featuredImage,
 	href,
 	date,
@@ -90,7 +92,8 @@ const formattedDate = date
 				{readingTime && <span>{readingTime} min</span>}
 			</div>
 			<h2 class="card-title">{title}</h2>
-			{excerpt && <p class="card-excerpt">{excerpt}</p>}
+			{snippet && <p class="card-excerpt" set:html={snippet}></p>}
+			{!snippet && excerpt && <p class="card-excerpt">{excerpt}</p>}
 		</div>
 	</a>
 	{
@@ -192,6 +195,14 @@ const formattedDate = date
 		-webkit-line-clamp: 2;
 		-webkit-box-orient: vertical;
 		overflow: hidden;
+	}
+
+	/* FTS returns <mark> wrapping the matched terms */
+	.card-excerpt :global(mark) {
+		background: var(--color-accent-ring, rgba(99, 102, 241, 0.2));
+		color: inherit;
+		padding: 0 0.1em;
+		border-radius: 2px;
 	}
 
 	.card-tags {
