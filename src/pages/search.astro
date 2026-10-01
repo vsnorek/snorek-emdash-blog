@@ -1,47 +1,43 @@
 ---
 export const prerender = false;
 
-import { getEmDashCollection } from "emdash";
+import { search, getEmDashCollection } from "emdash";
 import Base from "../layouts/Base.astro";
 import PostCard from "../components/PostCard.astro";
-import { getReadingTime, extractText } from "../utils/reading-time";
+import { getReadingTime } from "../utils/reading-time";
 
 const query = Astro.url.searchParams.get("q")?.trim() || "";
 
+// Ranking and matching come from the FTS index rather than substring
+// comparisons in JS: results arrive ordered by relevance and the index
+// handles tokenization, so "psychological" matches "psychology".
+const { items: hits } = query
+	? await search(query, { collections: ["posts"], limit: 30 })
+	: { items: [] };
+
+// search() returns id/title/snippet only, so the cards still need the
+// collection for date, excerpt and reading time. entry.id is the slug
+// and entry.data.id is the database ULID; search() may return either.
 const { entries: allPosts } = await getEmDashCollection("posts");
 
-// Simple search: match query against title, excerpt, and content
-function matchesQuery(post: (typeof allPosts)[0], q: string): boolean {
-	if (!q) return false;
-	const lower = q.toLowerCase();
-	const title = (post.data.title || "").toLowerCase();
-	const excerpt = (post.data.excerpt || "").toLowerCase();
-	// Extract plain text from portable text blocks (avoids matching on _type, _key, etc.)
-	const content = extractText(post.data.content).toLowerCase();
-	return (
-		title.includes(lower) || excerpt.includes(lower) || content.includes(lower)
-	);
-}
-
-const results = query ? allPosts.filter((p) => matchesQuery(p, query)) : [];
+const results = hits
+	.map((hit) =>
+		allPosts.find(
+			(post) =>
+				String(post.id) === String(hit.id) ||
+				String(post.data.id) === String(hit.id) ||
+				String(post.id) === String(hit.slug),
+		),
+	)
+	.filter((post) => post !== undefined);
 ---
 
-<Base
-	title={query ? `Search: ${query}` : "Search"}
-	description="Search blog posts"
->
+<Base title={query ? `Search: ${query}` : "Search"} description="Search blog posts">
 	<section class="search-page">
 		<h1 class="search-title">Search</h1>
 
 		<form method="get" action="/search" class="search-form">
-			<input
-				type="search"
-				name="q"
-				value={query}
-				placeholder="Search posts..."
-				class="search-input"
-				autofocus
-			/>
+			<input type="search" name="q" value={query} placeholder="Search posts..." class="search-input" autofocus />
 			<button type="submit" class="search-button">Search</button>
 		</form>
 
@@ -59,14 +55,7 @@ const results = query ? allPosts.filter((p) => matchesQuery(p, query)) : [];
 			results.length > 0 && (
 				<div class="search-results">
 					{results.map((post) => (
-						<PostCard
-							title={post.data.title}
-							excerpt={post.data.excerpt}
-							featuredImage={post.data.featured_image}
-							href={`/posts/${post.id}`}
-							date={post.data.publishedAt ?? undefined}
-							readingTime={getReadingTime(post.data.content)}
-						/>
+						<PostCard title={post.data.title} excerpt={post.data.excerpt} featuredImage={post.data.featured_image} href={`/posts/${post.id}`} date={post.data.publishedAt ?? undefined} readingTime={getReadingTime(post.data.content)} />
 					))}
 				</div>
 			)
