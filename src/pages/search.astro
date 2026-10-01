@@ -21,15 +21,16 @@ const { items: hits } = query
 const { entries: allPosts } = await getEmDashCollection("posts");
 
 const results = hits
-	.map((hit) =>
-		allPosts.find(
+	.map((hit) => ({
+		post: allPosts.find(
 			(post) =>
 				String(post.id) === String(hit.id) ||
 				String(post.data.id) === String(hit.id) ||
 				String(post.id) === String(hit.slug),
 		),
-	)
-	.filter((post) => post !== undefined);
+		snippet: hit.snippet,
+	}))
+	.filter((row) => row.post !== undefined);
 ---
 
 <Base title={query ? `Search: ${query}` : "Search"} description="Search blog posts">
@@ -54,8 +55,8 @@ const results = hits
 		{
 			results.length > 0 && (
 				<div class="search-results">
-					{results.map((post) => (
-						<PostCard title={post.data.title} excerpt={post.data.excerpt} featuredImage={post.data.featured_image} href={`/posts/${post.id}`} date={post.data.publishedAt ?? undefined} readingTime={getReadingTime(post.data.content)} />
+					{results.map((result) => (
+					<PostCard title={result.post.data.title} snippet={result.snippet} excerpt={result.post.data.excerpt} featuredImage={result.post.data.featured_image} href={`/posts/${result.post.id}`} date={result.post.data.publishedAt ?? undefined} readingTime={getReadingTime(result.post.data.content)} />
 					))}
 				</div>
 			)
