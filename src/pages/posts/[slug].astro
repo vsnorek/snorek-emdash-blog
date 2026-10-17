@@ -4,6 +4,7 @@ import {
 	getEmDashCollection,
 	getEntryTerms,
 	getSeoMeta,
+	getSiteSettings,
 } from "emdash";
 import { Image, PortableText, WidgetArea } from "emdash/ui";
 import { Comments, CommentForm } from "emdash/ui/comments";
@@ -49,8 +50,9 @@ function getImageUrl(img: unknown): string | undefined {
 const featuredImageUrl = getImageUrl(post.data.featured_image);
 
 // Generate SEO meta from content
+const settings = await getSiteSettings();
 const seo = getSeoMeta(post, {
-	siteTitle: "My Blog",
+	siteTitle: settings?.title || "Tests, Minds and Stories",
 	siteUrl: Astro.url.origin,
 	path: `/posts/${slug}`,
 	defaultOgImage: featuredImageUrl,
