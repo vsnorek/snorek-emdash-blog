@@ -140,7 +140,7 @@ const isLoggedIn = !!Astro.locals.user;
 			<div class="footer-inner">
 				<div class="footer-grid">
 					<div class="footer-brand">
-						<a href="/" class="footer-logo">{siteTitle}</a>
+						<a href="/" class="footer-logo">{siteLogo?.url && <img src={siteLogo.url} alt={siteLogo.alt || siteTitle} class="footer-logo-img" />}<span class="footer-logo-text">{siteTitle}</span></a>
 						<p class="footer-tagline">{siteTagline}</p>
 					</div>
 					<div class="footer-nav">
@@ -771,11 +771,20 @@ const isLoggedIn = !!Astro.locals.user;
 			}
 
 			.footer-logo {
+				display: inline-flex;
+				align-items: center;
+				gap: var(--spacing-2);
 				font-size: var(--font-size-lg);
 				font-weight: 600;
 				color: var(--color-text);
 				text-decoration: none;
 				letter-spacing: var(--tracking-snug);
+			}
+
+			.footer-logo-img {
+				height: 28px;
+				width: auto;
+				object-fit: contain;
 			}
 
 			.footer-tagline {
